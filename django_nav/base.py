@@ -38,7 +38,7 @@ class NavType(object):
         if self.view:
             return reverse(self.view, args=self.args, kwargs=self.kwargs,
                            prefix='/')
-        else if self.url:
+        elif self.url:
             return self.url
         return '#'
 
