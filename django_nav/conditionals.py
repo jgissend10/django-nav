@@ -1,5 +1,8 @@
 def user_is_authenticated(context, *args, **kwargs):
     return context['user'].is_authenticated()
+    
+def user_is_not_authenticated(context, *args, **kwargs):
+    return not context['user'].is_authenticated()
 
 def user_is_staff(context, *args, **kwargs):
     return context['user'].is_staff
