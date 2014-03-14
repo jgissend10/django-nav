@@ -25,6 +25,7 @@ from django.core.urlresolvers import reverse
 class NavType(object):
     name = u'I Forgot to Name this'
     view = None
+    url = None
     args = ()
     kwargs ={}
     options = []
@@ -37,7 +38,8 @@ class NavType(object):
         if self.view:
             return reverse(self.view, args=self.args, kwargs=self.kwargs,
                            prefix='/')
-
+        else if self.url:
+            return self.url
         return '#'
 
 class NavOption(NavType):
