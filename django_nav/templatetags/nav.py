@@ -75,10 +75,29 @@ class GetNavNode(template.Node):
             nav.option_list = self.build_options(nav.options)
             nav.active = False
             url = nav.get_absolute_url()
-            nav.active = nav.active_if(url, self.context['request'].path)
+            nav.active = nav.active_if(url, self.context['request'].path) or self.option_active(nav.options)
 
             self.context[self.var_name].append(
                 template.loader.render_to_string(nav.template, {'nav': nav}))
+
+    def option_active(self, nav_options):
+        options = []
+        for option in nav_options:
+            option = option()
+            if self.args:
+                option.args = self.args
+
+            if self.kwargs:
+                option.kwargs = self.kwargs
+
+            if self.check_conditional(option):
+                continue
+
+            option.active = False
+            option.active = option.active_if(option.get_absolute_url(), self.context['request'].path) or self.option_active(option.options)
+            options.append(option.active)
+        
+        return any(options)
 
     def build_options(self, nav_options):
         options = []
@@ -94,7 +113,7 @@ class GetNavNode(template.Node):
                 continue
 
             option.active = False
-            option.active = option.active_if(option.get_absolute_url(), self.context['request'].path)
+            option.active = option.active_if(option.get_absolute_url(), self.context['request'].path) or self.option_active(option.options)
             option.option_list = self.build_options(option.options)
             options.append(template.loader.render_to_string(option.template,
                                                             {'option': option}))
